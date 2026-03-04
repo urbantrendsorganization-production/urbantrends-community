@@ -1,5 +1,5 @@
-# 🏙️ Urbantrends Community
-> **The Digital Architecture of Urban Engagement.**
+# 🏙️ Urbantrends: Developer Collective
+> **The Digital Architecture of Elite Engineering.**
 
 [![Framework: Django](https://img.shields.io/badge/Backend-Django_5.0-092E20?style=flat-square&logo=django)](https://djangoproject.com)
 [![Library: React](https://img.shields.io/badge/Frontend-React_18-61DAFB?style=flat-square&logo=react)](https://react.dev)
@@ -8,32 +8,32 @@
 
 ---
 
-## 📐 Project Overview
+## Project Overview
 Urbantrends is a specialized community platform where developers don't just "post"—they **architect**. It is a space for sharing deep technical experiences, high-fidelity project showcases, and the "structural" decisions behind the code.
 
 
 
 ---
 
-## 🛠️ Technical Stack
+## Technical Stack
 
 ### **Frontend (Vite + React)**
-- **Styling:** Tailwind CSS with a strict `radius: 0` configuration.
+- **Styling:** Tailwind CSS with a strict **radius: 0** (Brutalist) configuration.
 - **Components:** Radix UI primitives via **shadcn/ui**.
-- **Icons:** Phosphor Icons for a consistent architectural look.
-- **State:** Axios with Interceptors for seamless JWT refreshing.
+- **Icons:** Phosphor Icons for a clean, architectural aesthetic.
+- **State:** Axios with Interceptors for automated JWT token rotation.
 
 ### **Backend (Django REST Framework)**
 - **App Name:** `community_accounts`
-- **Auth:** SimpleJWT with a 1-hour sliding window.
-- **Signals:** Automated `CommunityProfile` creation on user registration.
-- **Database:** PostgreSQL (Production) / SQLite (Dev).
+- **Auth:** SimpleJWT with a 1-hour sliding access window.
+- **Signals:** Automated `CommunityProfile` creation upon User registration.
+- **Database:** PostgreSQL (Production) / SQLite (Development).
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. The Backend (Python 3.14+)
+### 1. Backend Setup (Django)
 ```bash
 # Enter the workspace
 cd community_accounts_backend
@@ -48,10 +48,8 @@ python manage.py migrate
 
 # Start the engine
 python manage.py runserver 8000
-```
-# Enter the workspace
-cd community_dashboard_frontend
 
-# Install & Launch
-npm install
-npm run dev
+# accounts apis
+Register	/accounts/auth/register/	POST
+Login	    /accounts/auth/login/	    POST
+My Profile	/accounts/accounts/me/	    GET/   PATCH
