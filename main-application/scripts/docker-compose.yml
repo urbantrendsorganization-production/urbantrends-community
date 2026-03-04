@@ -16,8 +16,8 @@ services:
       - urbantrends_community
 
   urbantrends-community:
-    build: ./back-end/community-backend-app
-    container_name: urbantrends-backend
+    build: ../back-end/community-backend-app/
+    container_name: urbantrends-community
     restart: always
     # Wait for DB to be healthy before starting Gunicorn
     command: >
@@ -33,6 +33,7 @@ services:
       - db
     networks:
       - urbantrends_community
+
 volumes:
   postgres_data:
 
