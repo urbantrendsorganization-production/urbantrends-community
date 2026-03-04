@@ -2,8 +2,6 @@ import * as React from "react"
 import { 
   House, 
   UsersThree, 
-  ChatTeardropText, 
-  Gear, 
   Hash, 
   TrendUp,
   SignOut
