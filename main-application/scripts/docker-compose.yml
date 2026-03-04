@@ -17,19 +17,18 @@ services:
 
   urbantrends-community:
     build: ./back-end/community-backend-app
-    dockerfile: Dockerfile
-    container_name: urbantrends-community
+    container_name: urbantrends-backend
     restart: always
     # Wait for DB to be healthy before starting Gunicorn
     command: >
       sh -c "python manage.py migrate &&
              gunicorn community_appliccation.wsgi:application --bind 0.0.0.0:8000"
     volumes:
-      - ./back-end/community-backend-app/:app
+      - ../back-end/community-backend-app:/app
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8003:8000"
     env_file:
-      - community.env
+      - ../back-end/community-backend-app/community.env
     depends_on:
       - db
     networks:
