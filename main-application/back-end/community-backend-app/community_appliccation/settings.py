@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'community_accounts.apps.CommunityAccountsConfig',
+    'community_ai',
 ]
 
 MIDDLEWARE = [
@@ -116,6 +117,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
