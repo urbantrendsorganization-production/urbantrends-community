@@ -9,7 +9,7 @@
 ---
 
 ## 📐 Project Overview
-Urbantrends Community is a bespoke dashboard designed for urban planners, architects, and city enthusiasts. It features a "Radius-0" brutalist aesthetic, an integrated **Architect_AI** query system, and a robust user-profiling engine.
+Urbantrends is a specialized community platform where developers don't just "post"—they **architect**. It is a space for sharing deep technical experiences, high-fidelity project showcases, and the "structural" decisions behind the code.
 
 
 
