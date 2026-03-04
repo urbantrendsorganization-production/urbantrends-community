@@ -53,3 +53,25 @@ python manage.py runserver 8000
 Register	/accounts/auth/register/	POST
 Login	    /accounts/auth/login/	    POST
 My Profile	/accounts/accounts/me/	    GET/   PATCH
+```
+
+## ARCHITECT_AI
+This is an all in one al powered by gemini to handle developer and business centric response
+
+```
+# ARCHITECT_AI API KEY
+Query /api/ai/queries/ [POST]
+AI History api/ai/queries/ [GET]
+```
+
+## 🤖 Architect_AI Integration
+The platform features a built-in **Senior Software Architect** powered by Gemini 2.0.
+
+### Real-world Example:
+**User:** "How should I structure a multi-tenant database?"
+**AI Response:** *[The detailed PostgreSQL Schema-per-Tenant strategy you just received]*
+
+### Key AI Features:
+- **Context Awareness:** Recognizes your developer profile and tech stack.
+- **Persistent Logs:** All architectural advice is saved to your "Engineering Logs" for future reference.
+- **Brutalist Tone:** Direct, high-utility, and zero-fluff technical guidance.
