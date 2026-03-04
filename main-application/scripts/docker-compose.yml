@@ -17,7 +17,8 @@ services:
 
   urbantrends-community:
     build: ./back-end/community-backend-app
-    container_name: urbantrends-backend
+    dockerfile: Dockerfile
+    container_name: urbantrends-community
     restart: always
     # Wait for DB to be healthy before starting Gunicorn
     command: >
