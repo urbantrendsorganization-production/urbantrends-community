@@ -48,7 +48,7 @@ export function SignupForm({
     try {
       // Endpoint matches our Django backend mapping: /api/accounts/auth/register/
       await api.post("accounts/auth/register/", {
-        full_name: name,
+        username: name,
         email: email,
         password: password,
       })
