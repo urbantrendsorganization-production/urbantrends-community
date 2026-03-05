@@ -1,7 +1,15 @@
 import * as React from "react"
-import { House, UsersThree, Hash, TrendUp, SignOut } from "@phosphor-icons/react"
+import { 
+  House, 
+  UsersThree, 
+  Hash, 
+  TrendUp, 
+  SignOut, 
+  UserGear, 
+  IdentificationCard 
+} from "@phosphor-icons/react"
 import { Link, useLocation } from "react-router-dom"
-import { useAuth } from "./auth-context" // 1. Import Auth Context
+import { useAuth } from "./auth-context"
 
 import {
   Sidebar,
@@ -14,7 +22,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
-import { User } from "lucide-react"
 
 const data = {
   navMain: [
@@ -31,7 +38,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const { logout, login, user } = useAuth(); // 2. Grab logout and user
+  const { logout, user } = useAuth();
+
+  // Helper to get the display initial
+  const userInitial = (user?.display_name || user?.username || "U").charAt(0).toUpperCase();
 
   return (
     <Sidebar variant="inset" {...props} className="font-mono border-r-2 border-primary/10">
@@ -44,7 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Hash size={20} weight="bold" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight ml-2">
-                  <span className="truncate font-black uppercase tracking-tighter">Urbantrends Org</span>
+                  <span className="truncate font-black uppercase tracking-tighter text-foreground">Urbantrends Org</span>
                   <span className="truncate text-[10px] opacity-60 font-bold uppercase tracking-widest text-primary">Collective_v1</span>
                 </div>
               </Link>
@@ -76,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {data.spaces.map((space) => (
               <SidebarMenuItem key={space.name}>
                 <SidebarMenuButton asChild isActive={location.pathname === space.url}>
-                  <Link to={space.url} className="font-bold text-xs">
+                  <Link to={space.url} className="font-bold text-xs uppercase tracking-tighter">
                     <Hash size={18} className={location.pathname === space.url ? "text-primary" : "opacity-30"} />
                     <span>{space.name}</span>
                   </Link>
@@ -87,35 +97,63 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t-2 border-primary/5 p-4">
-  <SidebarMenu>
-    {user ? (
-      // SHOW LOGOUT IF AUTHENTICATED
-      <SidebarMenuItem>
-        <SidebarMenuButton 
-          onClick={logout}
-          className="text-destructive hover:bg-destructive/10 hover:text-destructive rounded-none border-2 border-transparent hover:border-destructive transition-all"
-        >
-          <SignOut size={20} weight="bold" />
-          <span className="font-black uppercase text-xs">Terminate_Session</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    ) : (
-      // SHOW LOGIN IF GUEST
-      <SidebarMenuItem>
-        <SidebarMenuButton 
-          asChild
-          className="text-primary hover:bg-primary/10 hover:text-primary rounded-none border-2 border-transparent hover:border-primary transition-all"
-        >
-          <Link to="/login">
-            <User size={20} weight="bold" />
-            <span className="font-black uppercase text-xs">Initialize_Login</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    )}
-  </SidebarMenu>
-</SidebarFooter>
+      <SidebarFooter className="border-t-2 border-primary/5 p-4 bg-muted/5">
+        <SidebarMenu className="gap-2">
+          {user ? (
+            <>
+              {/* PROFILE CONTROL NODE */}
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild
+                  isActive={location.pathname === "/profile"}
+                  className="h-14 hover:bg-primary/10 rounded-none border-2 border-transparent hover:border-primary transition-all group px-3"
+                >
+                  <Link to="/profile" className="flex items-center gap-3">
+                    <div className="flex aspect-square size-8 items-center justify-center rounded-none bg-primary text-primary-foreground font-black text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[1px] group-hover:translate-y-[1px] transition-all">
+                      {userInitial}
+                    </div>
+                    <div className="flex flex-col items-start overflow-hidden">
+                      <span className="truncate font-black uppercase text-[10px] tracking-tighter leading-none">
+                        {user.display_name || "Access_Profile"}
+                      </span>
+                      <span className="truncate text-[9px] opacity-40 font-bold uppercase tracking-widest mt-1">
+                        ID_{user.username || "AUTH_USER"}
+                      </span>
+                    </div>
+                    <UserGear size={16} className="ml-auto opacity-20 group-hover:opacity-100 transition-opacity" weight="bold" />
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* TERMINATE SESSION */}
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  onClick={logout}
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive rounded-none border-2 border-transparent hover:border-destructive transition-all group h-10"
+                >
+                  <SignOut size={18} weight="bold" />
+                  <span className="font-black uppercase text-[10px] tracking-tight">Terminate_Session</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </>
+          ) : (
+            /* GUEST ACCESS */
+            <SidebarMenuItem>
+              <SidebarMenuButton 
+                asChild
+                className="h-12 text-primary hover:bg-primary/10 hover:text-primary rounded-none border-2 border-transparent hover:border-primary transition-all"
+              >
+                <Link to="/login" className="flex items-center gap-3">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-none bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <IdentificationCard size={20} weight="bold" />
+                  </div>
+                  <span className="font-black uppercase text-xs tracking-tight">Initialize_Login</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }

@@ -11,18 +11,15 @@ import {
 } from "@/components/ui/card"
 // Note: Ensure these Field components exist in your UI folder or use standard divs
 import {
-  Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import api from "@/lib/api"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "./auth-context"
- // 1. IMPORT AUTH CONTEXT
+// 1. IMPORT AUTH CONTEXT
 
 export function LoginForm({
   className,
@@ -38,7 +35,7 @@ export function LoginForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
@@ -52,8 +49,8 @@ export function LoginForm({
     setError(null);
 
     try {
-      console.log("INIT: Handshake with unity.urbantrends.dev");
-      
+      // console.log("INIT: Handshake with unity.urbantrends.dev");
+
       const res = await api.post("accounts/auth/login/", {
         username,
         password,
@@ -62,11 +59,11 @@ export function LoginForm({
       // 3. UPDATE CONTEXT & LOCALSTORAGE
       // Assuming your API returns { access, refresh, user: { username, email } }
       // If it only returns tokens, you might need a separate call to get user data
-      const userData = res.data.user || { username, email: "" }; 
-      
+      const userData = res.data.user || { username, email: "" };
+
       login(res.data.access, userData);
       localStorage.setItem("refresh_token", res.data.refresh);
-      
+
       toast.success("Identity Verified.");
       navigate("/");
     } catch (err: any) {
@@ -87,8 +84,8 @@ export function LoginForm({
             Community User_Auth
           </CardTitle>
           <CardDescription className="font-mono text-[10px] uppercase font-bold text-primary/60">
-            {successMessage 
-              ? "Status: Account_Created. Initialize_Session." 
+            {successMessage
+              ? "Status: Account_Created. Initialize_Session."
               : "Status: Awaiting_Credentials..."}
           </CardDescription>
         </CardHeader>
@@ -132,23 +129,23 @@ export function LoginForm({
                   <FieldLabel className="text-[11px] font-black uppercase tracking-widest">Access_Key</FieldLabel>
                   <a href="#" className="text-[9px] font-black uppercase underline underline-offset-4 hover:text-primary">Lost_Key?</a>
                 </div>
-                <Input 
-                  name="password" 
-                  type="password" 
-                  required 
-                  className="rounded-none border-2 border-black focus-visible:ring-0 focus-visible:border-primary h-12" 
+                <Input
+                  name="password"
+                  type="password"
+                  required
+                  className="rounded-none border-2 border-black focus-visible:ring-0 focus-visible:border-primary h-12"
                 />
               </div>
 
               <div className="pt-4">
-                <Button 
-                  type="submit" 
-                  className="w-full rounded-none font-black uppercase py-7 text-xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all bg-primary" 
+                <Button
+                  type="submit"
+                  className="w-full rounded-none font-black uppercase py-7 text-xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all bg-primary"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 h-6 w-6 animate-spin" /> 
+                      <Loader2 className="mr-2 h-6 w-6 animate-spin" />
                       Verifying...
                     </>
                   ) : "Initialize_Session"}
@@ -161,7 +158,7 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      
+
       {/* Footer Branding */}
       <div className="text-center text-[10px] font-black uppercase opacity-20 tracking-[0.5em]">
         Urban_Trends_Logic_Gate

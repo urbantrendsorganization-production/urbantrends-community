@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import { 
-  Brain, PaperPlaneRight, TerminalWindow, XCircle, Sparkle,
+  Brain, PaperPlaneRight, TerminalWindow, XCircle,
   Copy, Check, ClockCounterClockwise as HistoryIcon, TrendUp, Gear,
   ChatCircle, ArrowFatUp, UsersFour, Plus, LockKeyOpen
 } from "@phosphor-icons/react"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Card, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
