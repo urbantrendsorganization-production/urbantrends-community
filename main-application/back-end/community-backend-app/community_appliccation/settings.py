@@ -99,6 +99,7 @@ CORS_ALLOWED_ORIGINS = [
 "http://localhost:5173",
 "https://www.google.com/search?q=http://127.0.0.1:5173",
 "https://www.google.com/search?q=https://community.urbantrends.dev",
+"https://community.urbantrends.dev",
 ]
 
 SIMPLE_JWT = {
