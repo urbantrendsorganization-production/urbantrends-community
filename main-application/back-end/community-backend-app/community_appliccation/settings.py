@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'community_accounts.apps.CommunityAccountsConfig',
     'community_ai',
+    'community_groups',
 ]
 
 MIDDLEWARE = [
