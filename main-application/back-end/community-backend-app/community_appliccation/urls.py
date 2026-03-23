@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from community_discussions.trending import TrendingView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('community_accounts.urls')),
     path('api/ai/', include('community_ai.urls')),
     path('api/groups/', include('community_groups.urls')),
+    path('api/announcements/', include('community_announcements.urls')),
+    path('api/discussions/', include('community_discussions.urls')),
+    path('api/trending/', TrendingView.as_view(), name='trending'),
 ]

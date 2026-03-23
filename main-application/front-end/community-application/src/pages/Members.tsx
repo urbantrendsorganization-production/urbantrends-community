@@ -1,8 +1,9 @@
-import { 
-  UsersThree, 
-  ShieldCheck, 
-  Cpu, 
-  IdentificationCard, 
+import { useState, useEffect } from "react"
+import {
+  UsersThree,
+  ShieldCheck,
+  Cpu,
+  IdentificationCard,
   MagnifyingGlass,
   MapPin,
   EnvelopeSimple,
@@ -13,58 +14,67 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import api from "@/lib/api"
+import { toast } from "sonner"
 
-const MEMBER_DIRECTORY = [
-  {
-    id: "USR-001",
-    name: "Arch_Vince",
-    role: "System Admin",
-    status: "Active",
-    location: "Node_London",
-    blueprints: 142,
-    reputation: 980,
-    tags: ["Core", "DevOps"],
-    initials: "AV"
-  },
-  {
-    id: "USR-002",
-    name: "Grid_Master",
-    role: "Lead Architect",
-    status: "Active",
-    location: "Node_Tokyo",
-    blueprints: 89,
-    reputation: 750,
-    tags: ["Frontend", "WebGL"],
-    initials: "GM"
-  },
-  {
-    id: "USR-003",
-    name: "Eduh_Logic",
-    role: "Senior Contributor",
-    status: "Idle",
-    location: "Node_Nairobi",
-    blueprints: 45,
-    reputation: 420,
-    tags: ["Database", "RAG"],
-    initials: "EL"
-  },
-  {
-    id: "USR-004",
-    name: "Data_Flow",
-    role: "Security Analyst",
-    status: "Offline",
-    location: "Node_Berlin",
-    blueprints: 22,
-    reputation: 310,
-    tags: ["Auth", "Encryption"],
-    initials: "DF"
-  }
-]
+interface Member {
+  id: number
+  display_name: string
+  slug: string
+  avatar_url: string | null
+  role: string
+  bio: string | null
+  location: string | null
+  website: string | null
+  reputation: number
+  is_verified: boolean
+  user: { username: string; email: string }
+}
+
+const FILTER_TABS = ["All_Users", "Administrators", "Moderators", "Members"] as const
+const ROLE_MAP: Record<string, string> = {
+  All_Users: "",
+  Administrators: "ADMIN",
+  Moderators: "MOD",
+  Members: "MEMBER",
+}
 
 function Members() {
+  const [members, setMembers] = useState<Member[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState("")
+  const [activeFilter, setActiveFilter] = useState<string>("All_Users")
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      setLoading(true)
+      try {
+        const res = await api.get("accounts/accounts/")
+        setMembers(res.data.results || res.data)
+      } catch {
+        toast.error("Failed to load member directory")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchMembers()
+  }, [])
+
+  const filtered = members.filter((m) => {
+    const roleKey = ROLE_MAP[activeFilter]
+    const matchesRole = !roleKey || m.role?.toUpperCase() === roleKey
+    const matchesSearch =
+      !search ||
+      (m.display_name || m.user?.username || "").toLowerCase().includes(search.toLowerCase())
+    return matchesRole && matchesSearch
+  })
+
+  const getInitials = (m: Member) =>
+    (m.display_name || m.user?.username || "??").substring(0, 2).toUpperCase()
+
   return (
     <div className="space-y-10 font-mono pb-20">
-      
+
       {/* HEADER: DATABASE INDEX */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-4 border-primary pb-8">
         <div className="space-y-2">
@@ -83,8 +93,10 @@ function Members() {
         {/* SEARCH CONSOLE */}
         <div className="relative w-full md:w-72">
           <MagnifyingGlass className="absolute left-3 top-3 text-primary" size={18} weight="bold" />
-          <Input 
-            placeholder="Search_ID..." 
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search_ID..."
             className="rounded-none border-2 border-primary pl-10 h-11 bg-primary/5 uppercase text-xs font-black focus-visible:ring-0 focus-visible:border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           />
         </div>
@@ -92,13 +104,14 @@ function Members() {
 
       {/* FILTER TABS */}
       <div className="flex flex-wrap gap-2">
-        {["All_Users", "Administrators", "Architects", "Contributors", "Bots"].map((filter, i) => (
-          <Button 
-            key={i}
-            variant={i === 0 ? "default" : "outline"}
+        {FILTER_TABS.map((filter) => (
+          <Button
+            key={filter}
+            onClick={() => setActiveFilter(filter)}
+            variant={activeFilter === filter ? "default" : "outline"}
             className={cn(
               "rounded-none h-8 text-[10px] font-black uppercase px-4 transition-none",
-              i === 0 ? "shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" : "border-2 border-primary/20 hover:border-primary"
+              activeFilter === filter ? "shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" : "border-2 border-primary/20 hover:border-primary"
             )}
           >
             {filter}
@@ -107,87 +120,102 @@ function Members() {
       </div>
 
       {/* MEMBERS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-4">
-        {MEMBER_DIRECTORY.map((member) => (
-          <Card key={member.id} className="rounded-none border-2 border-primary bg-background shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group hover:translate-y-[-4px] hover:translate-x-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(var(--primary),0.2)] transition-all overflow-hidden">
-            <CardContent className="p-0">
-              {/* TOP STRIP: ID & STATUS */}
-              <div className="flex items-center justify-between bg-primary/5 p-3 border-b-2 border-primary/10">
-                <span className="text-[9px] font-black text-muted-foreground tracking-widest uppercase italic">
-                  ID: {member.id}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-none",
-                    member.status === "Active" ? "bg-green-500 animate-pulse" : "bg-muted-foreground/40"
-                  )} />
-                  <span className="text-[9px] font-black uppercase tracking-tighter">
-                    {member.status}
+      {loading ? (
+        <div className="flex items-center justify-center p-16">
+          <span className="text-xs uppercase tracking-widest opacity-50 font-mono animate-pulse">Loading_Personnel_Data...</span>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="flex items-center justify-center p-16">
+          <span className="text-xs uppercase tracking-widest opacity-50 font-mono">No_Records_Found</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-4">
+          {filtered.map((member) => (
+            <Card key={member.id} className="rounded-none border-2 border-primary bg-background shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group hover:translate-y-[-4px] hover:translate-x-[-4px] hover:shadow-[10px_10px_0px_0px_rgba(var(--primary),0.2)] transition-all overflow-hidden">
+              <CardContent className="p-0">
+                {/* TOP STRIP: ID & STATUS */}
+                <div className="flex items-center justify-between bg-primary/5 p-3 border-b-2 border-primary/10">
+                  <span className="text-[9px] font-black text-muted-foreground tracking-widest uppercase italic">
+                    ID: USR-{String(member.id).padStart(3, "0")}
                   </span>
-                </div>
-              </div>
-
-              {/* PROFILE BODY */}
-              <div className="p-5 flex gap-4">
-                <Avatar className="h-16 w-16 rounded-none border-2 border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <AvatarFallback className="rounded-none font-black text-xl">{member.initials}</AvatarFallback>
-                </Avatar>
-                
-                <div className="space-y-1 overflow-hidden">
-                  <h3 className="text-xl font-black uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
-                    {member.name}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-primary">
-                    {member.role.includes("Admin") ? <ShieldCheck size={14} weight="fill" /> : <Cpu size={14} />}
-                    <span className="text-[10px] font-black uppercase tracking-tight">{member.role}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground pt-1">
-                    <MapPin size={12} weight="bold" />
-                    <span className="text-[9px] font-bold uppercase">{member.location}</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className={cn(
+                      "w-1.5 h-1.5 rounded-none",
+                      member.is_verified ? "bg-green-500 animate-pulse" : "bg-muted-foreground/40"
+                    )} />
+                    <span className="text-[9px] font-black uppercase tracking-tighter">
+                      {member.is_verified ? "Verified" : "Pending"}
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* STATS AREA */}
-              <div className="grid grid-cols-2 border-y-2 border-primary/10 bg-muted/5">
-                <div className="p-3 border-r-2 border-primary/10 text-center">
-                  <p className="text-[8px] font-black uppercase opacity-50">Reputation</p>
-                  <p className="text-sm font-black text-primary italic">+{member.reputation}</p>
-                </div>
-                <div className="p-3 text-center">
-                  <p className="text-[8px] font-black uppercase opacity-50">Blueprints</p>
-                  <p className="text-sm font-black italic">{member.blueprints}</p>
-                </div>
-              </div>
+                {/* PROFILE BODY */}
+                <div className="p-5 flex gap-4">
+                  <Avatar className="h-16 w-16 rounded-none border-2 border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <AvatarFallback className="rounded-none font-black text-xl">{getInitials(member)}</AvatarFallback>
+                  </Avatar>
 
-              {/* FOOTER ACTIONS */}
-              <div className="p-3 flex items-center justify-between bg-background">
-                <div className="flex gap-1">
-                  {member.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="rounded-none text-[8px] font-black uppercase px-1.5 py-0 border border-primary/10">
-                      {tag}
+                  <div className="space-y-1 overflow-hidden">
+                    <h3 className="text-xl font-black uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+                      {member.display_name || member.user?.username}
+                    </h3>
+                    <div className="flex items-center gap-1.5 text-primary">
+                      {member.role?.toUpperCase() === "ADMIN" ? <ShieldCheck size={14} weight="fill" /> : <Cpu size={14} />}
+                      <span className="text-[10px] font-black uppercase tracking-tight">{member.role || "Member"}</span>
+                    </div>
+                    {member.location && (
+                      <div className="flex items-center gap-1.5 text-muted-foreground pt-1">
+                        <MapPin size={12} weight="bold" />
+                        <span className="text-[9px] font-bold uppercase">{member.location}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* STATS AREA */}
+                <div className="grid grid-cols-2 border-y-2 border-primary/10 bg-muted/5">
+                  <div className="p-3 border-r-2 border-primary/10 text-center">
+                    <p className="text-[8px] font-black uppercase opacity-50">Reputation</p>
+                    <p className="text-sm font-black text-primary italic">+{member.reputation ?? 0}</p>
+                  </div>
+                  <div className="p-3 text-center">
+                    <p className="text-[8px] font-black uppercase opacity-50">Handle</p>
+                    <p className="text-sm font-black italic truncate">@{member.user?.username}</p>
+                  </div>
+                </div>
+
+                {/* FOOTER ACTIONS */}
+                <div className="p-3 flex items-center justify-between bg-background">
+                  <div className="flex gap-1">
+                    <Badge variant="secondary" className="rounded-none text-[8px] font-black uppercase px-1.5 py-0 border border-primary/10">
+                      {member.role || "Member"}
                     </Badge>
-                  ))}
+                    {member.is_verified && (
+                      <Badge variant="secondary" className="rounded-none text-[8px] font-black uppercase px-1.5 py-0 border border-primary/10">
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-2 border-primary/10 hover:border-primary hover:bg-primary hover:text-white transition-all">
+                    <EnvelopeSimple size={18} weight="bold" />
+                  </Button>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-2 border-primary/10 hover:border-primary hover:bg-primary hover:text-white transition-all">
-                  <EnvelopeSimple size={18} weight="bold" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
 
-        {/* RECRUITMENT CARD */}
-        <div className="border-2 border-dashed border-primary/30 p-8 flex flex-col items-center justify-center text-center space-y-4 bg-primary/5 group hover:border-solid hover:border-primary transition-all cursor-pointer">
-          <UsersThree size={48} className="text-primary/30 group-hover:text-primary transition-colors group-hover:scale-110" weight="duotone" />
-          <div className="space-y-1">
-            <h3 className="text-sm font-black uppercase tracking-widest">Expand Collective</h3>
-            <p className="text-[9px] font-bold text-muted-foreground uppercase leading-tight">
-              Invite trusted architects <br /> to the system core.
-            </p>
+          {/* RECRUITMENT CARD */}
+          <div className="border-2 border-dashed border-primary/30 p-8 flex flex-col items-center justify-center text-center space-y-4 bg-primary/5 group hover:border-solid hover:border-primary transition-all cursor-pointer">
+            <UsersThree size={48} className="text-primary/30 group-hover:text-primary transition-colors group-hover:scale-110" weight="duotone" />
+            <div className="space-y-1">
+              <h3 className="text-sm font-black uppercase tracking-widest">Expand Collective</h3>
+              <p className="text-[9px] font-bold text-muted-foreground uppercase leading-tight">
+                Invite trusted architects <br /> to the system core.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

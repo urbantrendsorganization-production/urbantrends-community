@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'community_accounts.apps.CommunityAccountsConfig',
     'community_ai',
     'community_groups',
+    'community_announcements.apps.CommunityAnnouncementsConfig',
+    'community_discussions.apps.CommunityDiscussionsConfig',
 ]
 
 MIDDLEWARE = [

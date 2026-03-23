@@ -99,10 +99,10 @@ export function LoginForm({
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" type="button" className="rounded-none border-2 border-black font-bold uppercase text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                <Button variant="outline" type="button" disabled className="rounded-none border-2 border-black font-bold uppercase text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] opacity-50 cursor-not-allowed" onClick={() => toast("Social login coming soon")}>
                   <AppleIcon className="mr-2 h-4 w-4" /> Apple_ID
                 </Button>
-                <Button variant="outline" type="button" className="rounded-none border-2 border-black font-bold uppercase text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                <Button variant="outline" type="button" disabled className="rounded-none border-2 border-black font-bold uppercase text-[10px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] opacity-50 cursor-not-allowed" onClick={() => toast("Social login coming soon")}>
                   <GoogleIcon className="mr-2 h-4 w-4" /> Google_ID
                 </Button>
               </div>

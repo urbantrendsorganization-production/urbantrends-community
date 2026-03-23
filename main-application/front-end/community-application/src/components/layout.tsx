@@ -1,11 +1,26 @@
+import { useEffect, useRef } from "react"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
-import { MagnifyingGlass, Bell, ChatTeardrop } from "@phosphor-icons/react" 
+import { MagnifyingGlass, Bell, ChatTeardrop } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault()
+        searchRef.current?.focus()
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [])
+
   return (
     // 1. Constrain the provider to the viewport height
     <SidebarProvider className="h-screen overflow-hidden">
@@ -25,18 +40,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </span>
           </div>
 
-          <div className="flex-1 max-w-sm px-2 sm:px-4">
-            <Button 
-              variant="outline" 
-              className="relative w-full justify-start bg-muted/10 text-[10px] font-bold uppercase text-muted-foreground rounded-none border-2 border-primary/20 hover:border-primary hover:bg-transparent transition-all h-9 px-3 group"
-            >
-              <MagnifyingGlass className="h-4 w-4 sm:mr-2 group-hover:text-primary transition-colors" />
-              <span className="hidden sm:inline truncate">Search_Grid...</span>
-              <span className="sm:hidden">Search...</span>
-              <kbd className="pointer-events-none absolute right-2 hidden h-5 select-none items-center gap-1 border-2 border-primary/20 bg-background px-1.5 font-mono text-[9px] font-black opacity-100 lg:flex">
-                CMD+K
-              </kbd>
-            </Button>
+          <div className="flex-1 max-w-sm px-2 sm:px-4 relative">
+            <MagnifyingGlass className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              ref={searchRef}
+              placeholder="Search_Grid..."
+              className="w-full bg-muted/10 text-[10px] font-bold uppercase text-muted-foreground rounded-none border-2 border-primary/20 hover:border-primary focus-visible:ring-0 focus-visible:border-primary transition-all h-9 pl-8 sm:pl-10 pr-16"
+            />
+            <kbd className="pointer-events-none absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 border-2 border-primary/20 bg-background px-1.5 font-mono text-[9px] font-black opacity-100 lg:flex">
+              CMD+K
+            </kbd>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3">
