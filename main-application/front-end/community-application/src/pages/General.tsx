@@ -5,7 +5,8 @@ import {
   Circle,
   UsersThree,
   ShieldCheck,
-  Cpu
+  Cpu,
+  Code
 } from "@phosphor-icons/react"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -31,9 +32,22 @@ interface Discussion {
 interface Member {
   id: number
   display_name: string
-  role: string
+  role: "DEVELOPER" | "CREATOR" | "TEAM" | string
   is_verified: boolean
   user: { username: string }
+}
+
+const ROLE_LABEL: Record<string, string> = {
+  DEVELOPER: "Developer",
+  CREATOR: "Creator",
+  TEAM: "Team",
+}
+
+function getRoleIcon(role: string) {
+  const r = role?.toUpperCase()
+  if (r === "DEVELOPER") return <ShieldCheck size={10} weight="fill" />
+  if (r === "CREATOR") return <Code size={10} />
+  return <Cpu size={10} />
 }
 
 function General() {
@@ -225,8 +239,8 @@ function General() {
                           {member.display_name || member.user?.username}
                         </span>
                         <div className="flex items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-                          {member.role?.toUpperCase() === "ADMIN" ? <ShieldCheck size={10} weight="fill" /> : <Cpu size={10} />}
-                          <span className="text-[8px] font-black uppercase">{member.role || "Member"}</span>
+                          {getRoleIcon(member.role)}
+                          <span className="text-[8px] font-black uppercase">{ROLE_LABEL[member.role?.toUpperCase()] || member.role || "Team"}</span>
                         </div>
                       </div>
                     </button>
@@ -255,8 +269,8 @@ function General() {
                           {member.display_name || member.user?.username}
                         </span>
                         <div className="flex items-center gap-1 opacity-40">
-                          <Cpu size={10} />
-                          <span className="text-[8px] font-black uppercase">{member.role || "Member"}</span>
+                          {getRoleIcon(member.role)}
+                          <span className="text-[8px] font-black uppercase">{ROLE_LABEL[member.role?.toUpperCase()] || member.role || "Team"}</span>
                         </div>
                       </div>
                     </button>

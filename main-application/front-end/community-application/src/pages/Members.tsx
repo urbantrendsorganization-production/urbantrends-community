@@ -3,13 +3,14 @@ import {
   UsersThree,
   ShieldCheck,
   Cpu,
+  Code,
   IdentificationCard,
   MagnifyingGlass,
   MapPin,
   EnvelopeSimple,
 } from "@phosphor-icons/react"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,6 +22,7 @@ interface Member {
   id: number
   display_name: string
   slug: string
+  avatar: string | null
   avatar_url: string | null
   role: string
   bio: string | null
@@ -31,12 +33,25 @@ interface Member {
   user: { username: string; email: string }
 }
 
-const FILTER_TABS = ["All_Users", "Administrators", "Moderators", "Members"] as const
+const FILTER_TABS = ["All_Users", "Developers", "Creators", "Team"] as const
 const ROLE_MAP: Record<string, string> = {
   All_Users: "",
-  Administrators: "ADMIN",
-  Moderators: "MOD",
-  Members: "MEMBER",
+  Developers: "DEVELOPER",
+  Creators: "CREATOR",
+  Team: "TEAM",
+}
+
+const ROLE_LABEL: Record<string, string> = {
+  DEVELOPER: "Developer",
+  CREATOR: "Creator",
+  TEAM: "Team",
+}
+
+function getRoleIcon(role: string) {
+  const r = role?.toUpperCase()
+  if (r === "DEVELOPER") return <ShieldCheck size={14} weight="fill" />
+  if (r === "CREATOR") return <Code size={14} />
+  return <Cpu size={14} />
 }
 
 function Members() {
@@ -71,6 +86,8 @@ function Members() {
 
   const getInitials = (m: Member) =>
     (m.display_name || m.user?.username || "??").substring(0, 2).toUpperCase()
+
+  const getAvatarSrc = (m: Member) => m.avatar || m.avatar_url || undefined
 
   return (
     <div className="space-y-10 font-mono pb-20">
@@ -152,6 +169,9 @@ function Members() {
                 {/* PROFILE BODY */}
                 <div className="p-5 flex gap-4">
                   <Avatar className="h-16 w-16 rounded-none border-2 border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {getAvatarSrc(member) && (
+                      <AvatarImage src={getAvatarSrc(member)} alt={member.display_name || member.user?.username} className="object-cover" />
+                    )}
                     <AvatarFallback className="rounded-none font-black text-xl">{getInitials(member)}</AvatarFallback>
                   </Avatar>
 
@@ -160,8 +180,10 @@ function Members() {
                       {member.display_name || member.user?.username}
                     </h3>
                     <div className="flex items-center gap-1.5 text-primary">
-                      {member.role?.toUpperCase() === "ADMIN" ? <ShieldCheck size={14} weight="fill" /> : <Cpu size={14} />}
-                      <span className="text-[10px] font-black uppercase tracking-tight">{member.role || "Member"}</span>
+                      {getRoleIcon(member.role)}
+                      <span className="text-[10px] font-black uppercase tracking-tight">
+                        {ROLE_LABEL[member.role?.toUpperCase()] || member.role || "Team"}
+                      </span>
                     </div>
                     {member.location && (
                       <div className="flex items-center gap-1.5 text-muted-foreground pt-1">
@@ -188,7 +210,7 @@ function Members() {
                 <div className="p-3 flex items-center justify-between bg-background">
                   <div className="flex gap-1">
                     <Badge variant="secondary" className="rounded-none text-[8px] font-black uppercase px-1.5 py-0 border border-primary/10">
-                      {member.role || "Member"}
+                      {ROLE_LABEL[member.role?.toUpperCase()] || member.role || "Team"}
                     </Badge>
                     {member.is_verified && (
                       <Badge variant="secondary" className="rounded-none text-[8px] font-black uppercase px-1.5 py-0 border border-primary/10">

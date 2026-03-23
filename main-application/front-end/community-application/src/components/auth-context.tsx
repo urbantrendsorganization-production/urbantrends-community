@@ -8,6 +8,9 @@ interface User {
   bio?: string;
   location?: string;
   website?: string;
+  avatar?: string | null;
+  avatar_url?: string | null;
+  role?: "DEVELOPER" | "CREATOR" | "TEAM";
 }
 
 interface AuthContextType {
