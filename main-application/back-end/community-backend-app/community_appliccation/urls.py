@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from community_discussions.trending import TrendingView
 
 urlpatterns = [
@@ -26,4 +28,4 @@ urlpatterns = [
     path('api/announcements/', include('community_announcements.urls')),
     path('api/discussions/', include('community_discussions.urls')),
     path('api/trending/', TrendingView.as_view(), name='trending'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

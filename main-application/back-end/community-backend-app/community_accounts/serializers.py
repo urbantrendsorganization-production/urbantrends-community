@@ -34,18 +34,19 @@ class CommunityProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityProfile
         fields = [
-            'id', 
-            'user', 
-            'display_name', 
+            'id',
+            'user',
+            'display_name',
             'effective_name',
-            'slug', 
-            'avatar_url', 
-            'role', 
-            'bio', 
-            'location', 
-            'website', 
-            'reputation', 
-            'is_verified', 
+            'slug',
+            'avatar_url',
+            'avatar',
+            'role',
+            'bio',
+            'location',
+            'website',
+            'reputation',
+            'is_verified',
             'created_at'
         ]
         read_only_fields = ['slug', 'reputation', 'created_at']
@@ -61,7 +62,7 @@ class CommunityProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommunityProfile
-        fields = ['username', 'email', 'display_name', 'bio', 'location', 'avatar_url', 'website']
+        fields = ['username', 'email', 'display_name', 'bio', 'location', 'avatar_url', 'avatar', 'website']
 
     def update(self, instance, validated_data):
         # Extract the user data

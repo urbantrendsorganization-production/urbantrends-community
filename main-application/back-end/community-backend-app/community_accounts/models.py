@@ -10,15 +10,15 @@ class CommunityProfile(models.Model):
     display_name = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(unique=True, blank=True)
     avatar_url = models.URLField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
-    # Roles for the Sidebar logic (Admin, Moderator, Member)
+    # Roles for the Sidebar logic (Developer, Creator, Team)
     ROLE_CHOICES = [
-        ('ADMIN', 'Admin'),
-        ('MOD', 'Moderator'),
-        ('MEMBER', 'Member'),
-        ('ARCHITECT', 'AI Architect'), # Reserved for your AI bot profile
+        ('DEVELOPER', 'Developer'),
+        ('CREATOR', 'Creator'),
+        ('TEAM', 'Team'),
     ]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='MEMBER')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='TEAM')
     
     # Community Stats
     bio = models.TextField(max_length=500, blank=True)

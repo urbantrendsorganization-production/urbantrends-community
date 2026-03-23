@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .models import CommunityProfile
 from .serializers import (
@@ -41,11 +42,17 @@ class ProfileViewSet(viewsets.GenericViewSet):
     """
     queryset = CommunityProfile.objects.select_related('user').all()
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     lookup_field = 'slug'
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['display_name', 'user__username', 'location']
     ordering_fields = ['reputation', 'created_at']
     ordering = ['-reputation']
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     def get_serializer_class(self):
         # Use the update serializer only when performing write operations
@@ -58,7 +65,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
         GET /accounts/accounts/
         Paginated member directory. Supports:
           ?search=<term>          — searches display_name, username, location
-          ?role=<role>            — filters by role (ADMIN, MOD, MEMBER, ARCHITECT)
+          ?role=<role>            — filters by role (DEVELOPER, CREATOR, TEAM)
           ?ordering=reputation    — sort by field (prefix with - for descending)
         """
         queryset = self.filter_queryset(self.get_queryset())
